@@ -1,10 +1,8 @@
 "use client";
 
-import "react-toastify/dist/ReactToastify.css";
-
 import { ToastContainer, toast } from "react-toastify";
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import "react-toastify/dist/ReactToastify.css";
 
 interface IPerson {
   id: number;
@@ -21,6 +19,8 @@ interface INotification {
 }
 
 export default function Home() {
+  const [personData, setPersonData] = useState<IPerson[]>([]);
+
   useEffect(() => {
     // 1. Buscar notificações não lidas
     fetch("http://localhost:8087/notifications/unread")
@@ -40,7 +40,9 @@ export default function Home() {
                         method: "PATCH",
                       }
                     ).then(() => {
-                      closeToast(); // Fecha o toast manualmente
+                      closeToast();
+                      // Atualizar lista de pessoas após confirmação
+                      loadPersons();
                     });
                   }}
                   style={{
@@ -60,20 +62,15 @@ export default function Home() {
             { autoClose: false }
           );
         });
-      })
-      .catch((err) => {
-        console.error("Erro ao carregar notificações:", err);
       });
 
-    // 2. SSE: Novas pessoas em tempo real
+    // 2. SSE em tempo real
     const eventSource = new EventSource(
       "http://localhost:8087/person/subscribe"
     );
 
     eventSource.addEventListener("new-person", (event) => {
       const data = JSON.parse(event.data);
-
-      // Exibe o toast com botão de confirmar
       toast(
         ({ closeToast }) => (
           <div>
@@ -93,6 +90,7 @@ export default function Home() {
                         }
                       ).then(() => {
                         closeToast();
+                        loadPersons();
                       });
                     }
                   });
@@ -120,15 +118,35 @@ export default function Home() {
       eventSource.close();
     };
 
+    // 3. Buscar lista de pessoas cadastradas
+    loadPersons();
+
     return () => {
       eventSource.close();
     };
   }, []);
 
+  const loadPersons = () => {
+    fetch("http://localhost:8087/person")
+      .then((res) => res.json())
+      .then((data: IPerson[]) => {
+        setPersonData(data);
+      });
+  };
+
   return (
     <>
       <h3>Notificações de novas pessoas</h3>
       <ToastContainer />
+
+      <h4 style={{ marginTop: "2rem" }}>Lista de Pessoas Cadastradas:</h4>
+      <ul>
+        {personData.map((person) => (
+          <li key={person.id}>
+            {person.firstName} {person.lastName} - {person.email}
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
