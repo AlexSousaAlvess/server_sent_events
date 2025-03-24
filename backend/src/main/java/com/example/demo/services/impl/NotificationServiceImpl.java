@@ -29,4 +29,15 @@ public class NotificationServiceImpl implements NotificationService {
     public List<NotificationModel> listAll() {
         return notificationRepository.findAll();
     }
+
+    public List<NotificationModel> listUnread() {
+        return notificationRepository.findByReadFalseOrderByCreatedAtAsc();
+    }
+
+    public void markAsRead(Long id) {
+        NotificationModel notification = notificationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Notificação não encontrada"));
+        notification.setRead(true);
+        notificationRepository.save(notification);
+    }
 }

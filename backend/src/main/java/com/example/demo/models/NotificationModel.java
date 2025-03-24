@@ -29,4 +29,7 @@ public class NotificationModel implements Serializable {
 
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private boolean read = false;
+
 }

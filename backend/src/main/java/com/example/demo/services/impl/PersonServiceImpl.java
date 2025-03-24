@@ -27,11 +27,4 @@ public class PersonServiceImpl implements PersonService {
     public PersonModel find(Long id) {
         return personRepository.findById(id).orElse(null);
     }
-
-    @Override
-    public void deleteId(Long id) {
-        personRepository.deleteById(id);
-    }
-
-
 }

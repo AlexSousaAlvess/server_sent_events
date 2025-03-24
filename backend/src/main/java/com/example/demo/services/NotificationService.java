@@ -8,4 +8,8 @@ public interface NotificationService {
     void save(String type, String content);
 
     List<NotificationModel> listAll();
+
+    List<NotificationModel> listUnread();
+
+    void markAsRead(Long id);
 }
