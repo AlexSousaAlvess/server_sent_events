@@ -1,6 +1,5 @@
 package com.example.demo.services;
 
-import com.example.demo.models.NotificationModel;
 import com.example.demo.models.PersonModel;
 
 import java.util.List;

@@ -24,13 +24,13 @@ public class PersonController {
     private final PersonService personService;
     private final NotificationService notificationService;
 
-    // Lista de inscritos SSE
-    private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
-
     @PostMapping
     public ResponseEntity<PersonModel> addPerson(@RequestBody PersonModel personModel) {
         PersonModel saved = personService.save(personModel);
-        notifySubscribers(saved);
+        notificationService.sendNotification(
+                "new-person",
+                "Nova Pessoa cadastrada: " + saved.getFirstName()
+        );
         return ResponseEntity.status(HttpStatus.OK).body(saved);
     }
 
@@ -55,34 +55,5 @@ public class PersonController {
         BeanUtils.copyProperties(personModel, person, "id");
         return ResponseEntity.status(HttpStatus.OK).body(personService.save(person));
 
-    }
-
-    // 🔔 Endpoint SSE para o front se inscrever
-    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter subscribe() {
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        emitters.add(emitter);
-
-        // Remove o emitter quando a conexão for fechada
-        emitter.onCompletion(() -> emitters.remove(emitter));
-        emitter.onTimeout(() -> emitters.remove(emitter));
-        emitter.onError(e -> emitters.remove(emitter));
-
-        return emitter;
-    }
-
-    // 🚀 Notifica todos os inscritos sobre a nova pessoa
-    private void notifySubscribers(PersonModel person) {
-        notificationService.save("new-person", "Nova pessoa cadastrada: " + person.getFirstName());
-
-        for (SseEmitter emitter : emitters) {
-            try {
-                emitter.send(SseEmitter.event()
-                        .name("new-person")
-                        .data(person));
-            } catch (IOException e) {
-                emitters.remove(emitter);
-            }
-        }
     }
 }

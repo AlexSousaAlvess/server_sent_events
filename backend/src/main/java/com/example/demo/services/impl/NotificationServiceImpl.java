@@ -1,43 +1,25 @@
 package com.example.demo.services.impl;
 
-import com.example.demo.models.NotificationModel;
-import com.example.demo.repositories.NotificationRepository;
+import com.example.demo.dto.NotificationDTO;
 import com.example.demo.services.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
-    private final NotificationRepository notificationRepository;
+
+    private final RestTemplate restTemplate;
+
+    @Value("${notification.service.url}")
+    private String notificationServiceUrl;
 
 
     @Override
-    public void save(String type, String content) {
-        NotificationModel notification = NotificationModel.builder()
-                .type(type)
-                .content(content)
-                .createdAt(LocalDateTime.now())
-                .build();
-        notificationRepository.save(notification);
-    }
-
-    @Override
-    public List<NotificationModel> listAll() {
-        return notificationRepository.findAll();
-    }
-
-    public List<NotificationModel> listUnread() {
-        return notificationRepository.findByReadFalseOrderByCreatedAtAsc();
-    }
-
-    public void markAsRead(Long id) {
-        NotificationModel notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notificação não encontrada"));
-        notification.setRead(true);
-        notificationRepository.save(notification);
+    public void sendNotification(String type, String content) {
+        NotificationDTO dto = new NotificationDTO(type, content);
+        restTemplate.postForEntity(notificationServiceUrl + "/notifications", dto, Void.class);
     }
 }
