@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: home
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+
+notification:
+  service:
+    url: http://localhost:8088
+
+server:
+  port: 8087

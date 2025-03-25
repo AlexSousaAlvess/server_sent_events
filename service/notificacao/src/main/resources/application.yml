@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: home
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notificacoes
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+
+server:
+  port: 8088
