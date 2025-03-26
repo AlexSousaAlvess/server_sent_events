@@ -5,6 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { personApi } from "@/lib/api";
 import { ToastContainer, toast } from "react-toastify";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   firstName: z.string().min(2, "Nome precisa ter no mínimo 2 caracteres"),
@@ -15,6 +17,15 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function CreatePersonPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+    }
+  }, [router]);
+
   const {
     register,
     handleSubmit,
@@ -36,7 +47,7 @@ export default function CreatePersonPage() {
   };
 
   return (
-    <main className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <main className="max-w-md mx-auto mt-10 p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Cadastrar Pessoa</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

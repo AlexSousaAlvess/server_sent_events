@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useEffect, useState, useCallback } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { personApi, notificationApi } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 interface IPerson {
   id: number;
@@ -20,6 +21,15 @@ interface INotification {
 }
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+    }
+  }, [router]);
+
   const [personData, setPersonData] = useState<IPerson[]>([]);
 
   const loadPersons = useCallback(async () => {

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import "./globals.css";
+import Header from "./components/Header"; 
 
 export const metadata = {
   title: "Gestão de Pessoas",
@@ -14,24 +14,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="bg-gray-100 text-gray-900">
-        <header
-          style={{
-            padding: "1rem",
-            background: "#20232a",
-            color: "white",
-            display: "flex",
-            gap: "1rem",
-            alignItems: "center",
-          }}
-        >
-          <h3 style={{ margin: 0 }}>📋 Pessoas</h3>
-          <nav style={{ display: "flex", gap: "1rem" }}>
-            <Link href="/">🏠 Home</Link>
-            <Link href="/create-person">➕ Cadastrar Pessoa</Link>
-          </nav>
-        </header>
-
-        <main style={{ padding: "1rem" }}>{children}</main>
+        <Header /> {/* Dinâmico com autenticação */}
+        <main className="p-4">{children}</main>
       </body>
     </html>
   );
