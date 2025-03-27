@@ -5,10 +5,7 @@ import com.purchase_service.services.PurchaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,8 +14,12 @@ public class PurchaseController {
     private final PurchaseService purchaseService;
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody PurchaseRequest request) {
-        purchaseService.processPurchase(request);
+    public ResponseEntity<Object> create(
+            @RequestBody PurchaseRequest request,
+            @RequestHeader("x-user-email") String userEmail,
+            @RequestHeader("x-user-role") String userRole
+    ) {
+        purchaseService.processPurchase(request, userEmail, userRole);
         return ResponseEntity.status(HttpStatus.OK).body("Compra registrada com sucesso");
     }
 }
