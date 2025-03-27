@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:8092/stock-db}
+    url: ${DB_URL:jdbc:postgresql://localhost:5437/stock-db}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:admin}

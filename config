@@ -1,0 +1,38 @@
+Config - backend
+
+person_service
+port: 8081
+banco: localhost:5433/person-db
+
+notification_service
+port: 8082
+banco:localhost:5434/notificacao-db
+
+product_service
+port: 8083
+banco: localhost:5435/product-db
+
+purchase_service
+port: 8084
+banco: localhost:5436/purchase-db
+
+stock_service
+port: 8085
+banco: localhost:5437/stock-db
+
+#####
+
+Config - broker(kafka)
+
+zookeeper
+port: 2181
+
+kafka
+port: 9092
+
+#####
+
+Front - React/next
+
+Person
+port: 3000

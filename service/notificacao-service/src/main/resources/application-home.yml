@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5433/notificacao-db}
+    url: ${DB_URL:jdbc:postgresql://localhost:5434/notificacao-db}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:admin}

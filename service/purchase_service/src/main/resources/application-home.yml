@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5437/purchase-db}
+    url: ${DB_URL:jdbc:postgresql://localhost:5436/purchase-db}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:admin}
