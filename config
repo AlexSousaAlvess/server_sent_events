@@ -1,5 +1,9 @@
 Config - backend
 
+gateway_service
+port: 8080
+
+
 person_service
 port: 8081
 banco: localhost:5433/person-db
