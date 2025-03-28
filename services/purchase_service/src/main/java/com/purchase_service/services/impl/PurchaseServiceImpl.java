@@ -24,10 +24,17 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public void processPurchase(PurchaseRequest request) {
+    public void processPurchase(PurchaseRequest request, String userEmail, String userRole) {
+        log.info("Usuario logado: {}", userEmail);
+        log.info("Perfil: {}",userRole);
+
         // Buscar produto no product-service
         Map product = restTemplate.getForObject(
                 "http://localhost:8090/product/" + request.getProductId(), Map.class);
+
+        if(userRole.equals("GERENTE")){
+            //
+        }
 
         if (product == null) {
             throw new RuntimeException("Produto não encontrado");

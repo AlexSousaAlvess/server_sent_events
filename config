@@ -24,6 +24,12 @@ stock_service
 port: 8085
 banco: localhost:5437/stock-db
 
+auth-service
+port: 8089
+ localhost:5438/auth-db
+
+
+
 #####
 
 Config - broker(kafka)
