@@ -14,6 +14,22 @@ spring:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 
       routes:
+
+        # Rota aberta (sem autenticação) para SSE
+        - id: notification-subscribe
+          uri: http://localhost:8082
+          predicates:
+            - Path=/notifications/subscribe
+
+        # Protegido por autenticação (restante do notification-service)
+        - id: notification-service
+          uri: http://localhost:8082
+          predicates:
+            #- Path=/notifications/unread, /notifications/*/read
+            - Path=/notifications/**
+          filters:
+            - JwtAuth
+
         - id: auth-service
           uri: http://localhost:8089
           predicates:
@@ -37,20 +53,6 @@ spring:
           uri: http://localhost:8085
           predicates:
             - Path=/stock/**
-          filters:
-            - JwtAuth
-
-        # 🔓 Liberado para SSE sem autenticação
-        - id: notification-subscribe
-          uri: http://localhost:8082
-          predicates:
-            - Path=/notifications/subscribe
-
-        # 🔐 Protegido por autenticação
-        - id: notification-service
-          uri: http://localhost:8082
-          predicates:
-            - Path=/notifications/**
           filters:
             - JwtAuth
 
