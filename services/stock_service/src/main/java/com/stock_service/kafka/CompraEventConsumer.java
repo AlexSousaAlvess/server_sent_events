@@ -14,7 +14,7 @@ public class CompraEventConsumer {
 
     private final StockRepository stockRepository;
 
-    @KafkaListener(topics = "compra-realizada", groupId = "stock-service")
+    @KafkaListener(topics = "notificacoes", groupId = "stock-service")
     public void consumeCompraEvent(CompraEvent event) {
         log.info("Evento de compra recebido: {}", event);
 

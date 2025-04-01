@@ -6,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 
 interface JwtPayload {
   sub: string; // email
-  role: "OPERADOR" | "SUPERVISOR" | "GERENTE";
+  role: "CLIENTE" | "OPERADOR" | "SUPERVISOR" | "GERENTE";
   exp: number;
 }
 
@@ -21,7 +21,13 @@ export default function Header() {
     if (token) {
       try {
         const decoded = jwtDecode<JwtPayload>(token);
-        setUser(decoded);
+        // Verifica expiração
+        if (decoded.exp * 1000 < Date.now()) {
+          localStorage.removeItem("token");
+          setUser(null);
+        } else {
+          setUser(decoded);
+        }
       } catch (err) {
         console.error("Token inválido");
         setUser(null);
@@ -55,15 +61,19 @@ export default function Header() {
           Início
         </button>
 
-        {(user.role === "SUPERVISOR" || user.role === "GERENTE") && (
+        {/* Mostrar botão de cadastro de produto para perfis permitidos */}
+        {["OPERADOR", "SUPERVISOR", "GERENTE"].includes(user.role) && (
           <button
-            onClick={() => router.push("/create-person")}
-            className={`hover:underline ${pathname === "/create-person" ? "font-bold" : ""}`}
+            onClick={() => router.push("/create-product")}
+            className={`hover:underline ${
+              pathname === "/create-product" ? "font-bold" : ""
+            }`}
           >
-            Cadastrar Pessoa
+            Cadastrar Produto
           </button>
         )}
 
+        {/* Dropdown de perfil */}
         <div className="relative">
           <button
             onClick={() => setMenuOpen((prev) => !prev)}

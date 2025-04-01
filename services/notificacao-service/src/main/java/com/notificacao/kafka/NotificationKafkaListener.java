@@ -1,5 +1,6 @@
 package com.notificacao.kafka;
 
+import com.notificacao.dto.CompraEvent;
 import com.notificacao.dto.NotificationDTO;
 import com.notificacao.services.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,23 @@ public class NotificationKafkaListener {
     @KafkaListener(
             topics = "notificacoes",
             groupId = "notificacao-group",
-            containerFactory = "kafkaListenerContainerFactory"
+            containerFactory = "kafkaListenerCompraEventFactory"
     )
-    public void listen(NotificationDTO dto) {
-        log.info("Kafka - Notificação recebida: {}", dto.getContent());
+    public void listen(CompraEvent event) {
+        if (event == null || event.getProductName() == null || event.getPrice() == null) {
+            log.error("Evento inválido: {}", event);
+            return;
+        }
+
+        log.info("Kafka - Evento de compra recebido: {}", event);
+
+        String content = String.format("Compra realizada: Produto %s por R$%.2f",
+                event.getProductName(),
+                event.getPrice());
+
+        NotificationDTO dto = new NotificationDTO("COMPRA", content);
         notificationService.save(dto);
     }
+
+
 }

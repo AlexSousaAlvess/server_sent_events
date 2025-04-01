@@ -23,8 +23,13 @@ export default function CreateProductPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return router.push("/login");
+  
     const decoded = jwtDecode<any>(token);
-    if (decoded.role !== "GERENTE") router.push("/");
+    const allowedRoles = ["OPERADOR", "SUPERVISOR", "GERENTE"];
+  
+    if (!allowedRoles.includes(decoded.role)) {
+      router.push("/");
+    }
   }, []);
 
   const {
@@ -47,7 +52,7 @@ export default function CreateProductPage() {
   };
 
   return (
-    <main className="max-w-md mx-auto mt-10 p-6 bg-white rounded-md shadow-md">
+    <main className="max-w-md mx-auto mt-10 p-6 rounded-md shadow-md">
       <h2 className="text-xl font-bold mb-4">Cadastrar Produto</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>

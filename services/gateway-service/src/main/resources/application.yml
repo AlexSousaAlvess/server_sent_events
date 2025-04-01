@@ -4,8 +4,10 @@ server:
 spring:
   application:
     name: gateway-service
+
   main:
     web-application-type: reactive
+
   cloud:
     gateway:
       default-filters:
@@ -38,6 +40,13 @@ spring:
           filters:
             - JwtAuth
 
+        # 🔓 Liberado para SSE sem autenticação
+        - id: notification-subscribe
+          uri: http://localhost:8082
+          predicates:
+            - Path=/notifications/subscribe
+
+        # 🔐 Protegido por autenticação
         - id: notification-service
           uri: http://localhost:8082
           predicates:

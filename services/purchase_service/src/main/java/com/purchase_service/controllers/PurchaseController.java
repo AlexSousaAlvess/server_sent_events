@@ -17,9 +17,10 @@ public class PurchaseController {
     public ResponseEntity<Object> create(
             @RequestBody PurchaseRequest request,
             @RequestHeader("x-user-email") String userEmail,
-            @RequestHeader("x-user-role") String userRole
+            @RequestHeader("x-user-role") String userRole,
+            @RequestHeader("Authorization") String token
     ) {
-        purchaseService.processPurchase(request, userEmail, userRole);
+        purchaseService.processPurchase(request, userEmail, userRole, token);
         return ResponseEntity.status(HttpStatus.OK).body("Compra registrada com sucesso");
     }
 }

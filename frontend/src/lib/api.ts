@@ -2,10 +2,13 @@ import axios from "axios";
 
 const API = axios.create({ baseURL: "http://localhost:8080" });
 
-API.interceptors.request.use((config) => {
+API.interceptors.request.use((config:any) => {
   const token = localStorage.getItem("token");
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
   }
   return config;
 });
@@ -17,11 +20,6 @@ export const productApi = {
 
 export const purchaseApi = {
   buy: (productId: number) => API.post("/purchases", { productId }),
-};
-
-export const authApi = {
-  login: (credentials:any) => API.post("/auth/login", credentials),
-  register: (body:any) => API.post("/auth/register", body),
 };
 
 export const notificationApi = {

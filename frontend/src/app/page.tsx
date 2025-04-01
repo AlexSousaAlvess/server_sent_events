@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { productApi, purchaseApi, notificationApi } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Product {
   id: number;
@@ -19,25 +20,40 @@ interface JwtPayload {
   exp: number;
 }
 
+interface INotification {
+  id: number;
+  type: string;
+  content: string;
+  createdAt: string;
+}
+
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [role, setRole] = useState<JwtPayload["role"] | null>(null);
   const router = useRouter();
-  const [role, setRole] = useState<string>("");
 
-  useEffect(() => {
+  // 🔐 Valida usuário
+  const loadUser = () => {
     const token = localStorage.getItem("token");
-    if (!token) router.push("/login");
-    else {
+    if (!token) return router.push("/login");
+    try {
       const decoded = jwtDecode<JwtPayload>(token);
       setRole(decoded.role);
+    } catch (err) {
+      console.error("Token inválido");
+      localStorage.removeItem("token");
+      router.push("/login");
     }
-    loadProducts();
-  }, []);
-
-  const loadProducts = async () => {
-    const { data } = await productApi.list();
-    setProducts(data);
   };
+
+  const loadProducts = useCallback(async () => {
+    try {
+      const { data } = await productApi.list();
+      setProducts(data);
+    } catch (err) {
+      toast.error("Erro ao carregar produtos");
+    }
+  }, []);
 
   const handleBuy = async (id: number) => {
     try {
@@ -48,6 +64,63 @@ export default function HomePage() {
     }
   };
 
+  const handleMarkAsRead = async (id: number, closeToast: () => void) => {
+    try {
+      await notificationApi.markRead(id);
+      closeToast();
+    } catch {
+      toast.error("Erro ao confirmar notificação");
+    }
+  };
+
+  const showNotification = (content: string, id: number) => {
+    toast(
+      ({ closeToast }) => (
+        <div className="text-sm">
+          <p className="text-gray-800">{content}</p>
+          <button
+            onClick={() => handleMarkAsRead(id, closeToast)}
+            className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+          >
+            Confirmar
+          </button>
+        </div>
+      ),
+      { autoClose: false }
+    );
+  };
+
+  const setupSSE = () => {
+    const eventSource = new EventSource("http://localhost:8080/notifications/subscribe");
+
+    eventSource.addEventListener("new-notification", (event) => {
+      const data: INotification = JSON.parse(event.data);
+      showNotification(data.content, data.id);
+    });
+
+    eventSource.onerror = (err) => {
+      console.error("Erro no SSE:", err);
+      eventSource.close();
+    };
+
+    return eventSource;
+  };
+
+  useEffect(() => {
+    loadUser();
+    loadProducts();
+
+    // 🚨 Notificações não lidas
+    notificationApi.unread().then(({ data }) => {
+      data.forEach((n: INotification) => showNotification(n.content, n.id));
+    });
+
+    const eventSource = setupSSE();
+    return () => eventSource.close();
+  }, [loadProducts]);
+
+  if (!role) return null;
+
   return (
     <main className="max-w-4xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Produtos Disponíveis</h1>
@@ -55,7 +128,7 @@ export default function HomePage() {
         {products.map((product) => (
           <li
             key={product.id}
-            className="border rounded-md p-4 shadow-sm bg-white"
+            className="border rounded-md p-4 shadow-sm"
           >
             <h2 className="font-semibold text-lg">{product.name}</h2>
             <p className="text-gray-600">{product.description}</p>
