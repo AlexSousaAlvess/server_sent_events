@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import { productApi, purchaseApi, notificationApi } from "@/lib/api";
-import { useRouter } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
 import "react-toastify/dist/ReactToastify.css";
+
+import { ToastContainer, toast } from "react-toastify";
+import { notificationApi, productApi, purchaseApi } from "@/lib/api";
+import { useCallback, useEffect, useState } from "react";
+
+import { jwtDecode } from "jwt-decode";
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: number;
@@ -90,7 +92,9 @@ export default function HomePage() {
   };
 
   const setupSSE = () => {
-    const eventSource = new EventSource("http://localhost:8080/notifications/subscribe");
+    const eventSource = new EventSource(
+      "http://localhost:8080/notifications/subscribe"
+    );
 
     eventSource.addEventListener("new-notification", (event) => {
       const data: INotification = JSON.parse(event.data);
@@ -121,6 +125,7 @@ export default function HomePage() {
 
     const eventSource = setupSSE();
     return () => eventSource.close();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadProducts, role]);
 
   if (!role) return null;
@@ -130,13 +135,12 @@ export default function HomePage() {
       <h1 className="text-2xl font-bold mb-6">Produtos Disponíveis</h1>
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {products.map((product) => (
-          <li
-            key={product.id}
-            className="border rounded-md p-4 shadow-sm"
-          >
+          <li key={product.id} className="border rounded-md p-4 shadow-sm">
             <h2 className="font-semibold text-lg">{product.name}</h2>
             <p className="text-gray-600">{product.description}</p>
-            <p className="text-blue-700 font-bold">R$ {product.price.toFixed(2)}</p>
+            <p className="text-blue-700 font-bold">
+              R$ {product.price.toFixed(2)}
+            </p>
             {role === "CLIENTE" && (
               <button
                 onClick={() => handleBuy(product.id)}
@@ -148,7 +152,7 @@ export default function HomePage() {
           </li>
         ))}
       </ul>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </main>
   );
 }
