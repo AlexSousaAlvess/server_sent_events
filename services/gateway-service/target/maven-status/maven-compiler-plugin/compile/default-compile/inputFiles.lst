@@ -1,3 +1,3 @@
-/home/alexsousa/Desktop/testes/desenvolvimento/server_sent_events/services/gateway-service/src/main/java/com/gateway_service/GatewayServiceApplication.java
-/home/alexsousa/Desktop/testes/desenvolvimento/server_sent_events/services/gateway-service/src/main/java/com/gateway_service/config/CorsGlobalConfig.java
-/home/alexsousa/Desktop/testes/desenvolvimento/server_sent_events/services/gateway-service/src/main/java/com/gateway_service/filters/JwtAuthGatewayFilterFactory.java
+C:\Users\Alex\Desktop\Developer\projetos\server_sent_events\services\gateway-service\src\main\java\com\gateway_service\config\CorsGlobalConfig.java
+C:\Users\Alex\Desktop\Developer\projetos\server_sent_events\services\gateway-service\src\main\java\com\gateway_service\filters\JwtAuthGatewayFilterFactory.java
+C:\Users\Alex\Desktop\Developer\projetos\server_sent_events\services\gateway-service\src\main\java\com\gateway_service\GatewayServiceApplication.java
