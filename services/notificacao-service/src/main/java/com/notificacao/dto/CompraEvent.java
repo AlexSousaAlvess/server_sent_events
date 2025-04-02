@@ -9,4 +9,7 @@ public class CompraEvent {
     private String productName;
     private Double price;
     private String buyerEmail;
+    private String buyerName;
+    private Integer stockQuantity; // pode vir null por enquanto
+
 }

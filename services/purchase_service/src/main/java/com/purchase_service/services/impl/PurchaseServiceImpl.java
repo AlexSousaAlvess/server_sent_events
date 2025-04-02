@@ -37,6 +37,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         headers.set("Authorization", token);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
+        // Buscar dados do produto
         ResponseEntity<Map> response = restTemplate.exchange(
                 "http://localhost:8080/product/" + request.getProductId(),
                 HttpMethod.GET,
@@ -50,7 +51,25 @@ public class PurchaseServiceImpl implements PurchaseService {
             throw new RuntimeException("Produto não encontrado");
         }
 
-        // Criação e salvamento continuam iguais...
+        // Consultar nome do comprador (auth-service)
+        String buyerName = "";
+        try {
+            ResponseEntity<Map> profileResponse = restTemplate.exchange(
+                    "http://localhost:8080/auth/profile?email=" + request.getBuyerEmail(),
+                    HttpMethod.GET,
+                    entity,
+                    Map.class
+            );
+
+            Map profile = profileResponse.getBody();
+            buyerName = (String) profile.getOrDefault("name", "");
+            log.info("Nome do comprador obtido do auth-service: {}", buyerName);
+
+        } catch (Exception e) {
+            log.warn("Erro ao consultar nome do comprador no auth-service: {}", e.getMessage());
+        }
+
+        // Criar e salvar a compra
         PurchaseModel purchase = PurchaseModel.builder()
                 .productId(request.getProductId())
                 .productName((String) product.get("name"))
@@ -61,11 +80,14 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         purchaseRepository.save(purchase);
 
+        // Montar e enviar o novo CompraEvent
         CompraEvent event = CompraEvent.builder()
                 .productId(purchase.getProductId())
                 .productName(purchase.getProductName())
                 .price(purchase.getPrice())
                 .buyerEmail(purchase.getBuyerEmail())
+                .buyerName(buyerName)
+                .stockQuantity(null)
                 .build();
 
         kafkaTemplate.send("notificacoes", event);

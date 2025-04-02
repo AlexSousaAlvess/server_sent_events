@@ -32,7 +32,6 @@ export default function HomePage() {
   const [role, setRole] = useState<JwtPayload["role"] | null>(null);
   const router = useRouter();
 
-  // 🔐 Valida usuário
   const loadUser = () => {
     const token = localStorage.getItem("token");
     if (!token) return router.push("/login");
@@ -95,7 +94,9 @@ export default function HomePage() {
 
     eventSource.addEventListener("new-notification", (event) => {
       const data: INotification = JSON.parse(event.data);
-      showNotification(data.content, data.id);
+      if (data.type === role) {
+        showNotification(data.content, data.id);
+      }
     });
 
     eventSource.onerror = (err) => {
@@ -110,14 +111,17 @@ export default function HomePage() {
     loadUser();
     loadProducts();
 
-    // 🚨 Notificações não lidas
     notificationApi.unread().then(({ data }) => {
-      data.forEach((n: INotification) => showNotification(n.content, n.id));
+      data.forEach((n: INotification) => {
+        if (n.type === role) {
+          showNotification(n.content, n.id);
+        }
+      });
     });
 
     const eventSource = setupSSE();
     return () => eventSource.close();
-  }, [loadProducts]);
+  }, [loadProducts, role]);
 
   if (!role) return null;
 

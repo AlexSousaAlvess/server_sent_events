@@ -32,10 +32,23 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserProfileResponse> profile(HttpServletRequest request) {
-        String token = jwtService.extractTokenFromHeader(request);
-        String email = jwtService.extractUsername(token);
+    public ResponseEntity<UserProfileResponse> profile(
+            @RequestParam(value = "email", required = false) String emailParam,
+            HttpServletRequest request
+    ) {
+        String email;
+
+        if (emailParam != null && !emailParam.isBlank()) {
+            email = emailParam;
+        } else {
+            // Fallback para extrair do token
+            String token = jwtService.extractTokenFromHeader(request);
+            email = jwtService.extractUsername(token);
+        }
+
         UserModel user = userRepository.findByEmail(email).orElseThrow();
-        return ResponseEntity.ok(new UserProfileResponse(user.getName(), user.getEmail(), user.getRole()));
+        return ResponseEntity.ok(
+                new UserProfileResponse(user.getName(), user.getEmail(), user.getRole())
+        );
     }
 }
