@@ -28,13 +28,16 @@ public class NotificationKafkaListener {
         notificationService.save(new NotificationDTO(
                 "OPERADOR",
                 String.format("Compra por %s (%s) - Produto: %s, R$ %.2f",
-                        event.getBuyerName(), event.getBuyerEmail(), event.getProductName(), event.getPrice())
+                        event.getBuyerName(), event.getBuyerEmail(), event.getProductName(), event.getPrice()
+                ),
+                event.getBuyerEmail()
         ));
 
         // Notificação para SUPERVISOR
         notificationService.save(new NotificationDTO(
                 "SUPERVISOR",
-                String.format("Produto comprado: %s por R$ %.2f", event.getProductName(), event.getPrice())
+                String.format("Produto comprado: %s por R$ %.2f", event.getProductName(), event.getPrice()),
+                event.getBuyerEmail()
         ));
 
         // Notificação para GERENTE
@@ -43,7 +46,8 @@ public class NotificationKafkaListener {
                 String.format("Produto: %s, R$ %.2f | Estoque: %s",
                         event.getProductName(),
                         event.getPrice(),
-                        event.getStockQuantity() != null ? event.getStockQuantity() : "N/A")
+                        event.getStockQuantity() != null ? event.getStockQuantity() : "N/A"),
+                event.getBuyerEmail()
         ));
     }
 }

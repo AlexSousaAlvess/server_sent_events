@@ -31,4 +31,6 @@ public class NotificationModel implements Serializable {
     @Column(nullable = false)
     private boolean read = false;
 
+    private String userEmail;
+
 }

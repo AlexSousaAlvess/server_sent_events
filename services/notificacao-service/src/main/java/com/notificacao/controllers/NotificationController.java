@@ -12,9 +12,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/notifications")
-@RequiredArgsConstructor
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -27,8 +27,8 @@ public class NotificationController {
     }
 
     @GetMapping("/unread")
-    public List<NotificationModel> getUnread() {
-        return notificationService.listUnread();
+    public List<NotificationModel> getUnread(@RequestHeader("x-user-email") String userEmail) {
+        return notificationService.listUnreadForUser(userEmail);
     }
 
     @PatchMapping("/{id}/read")

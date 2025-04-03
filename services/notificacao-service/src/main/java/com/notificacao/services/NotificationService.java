@@ -11,9 +11,9 @@ public interface NotificationService {
 
     List<NotificationModel> listAll();
 
-    List<NotificationModel> listUnread();
-
     void markAsRead(Long id);
 
     SseEmitter subscribe();
+
+    List<NotificationModel> listUnreadForUser(String userEmail);
 }

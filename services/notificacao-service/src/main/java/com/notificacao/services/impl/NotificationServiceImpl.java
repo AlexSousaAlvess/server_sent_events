@@ -30,6 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .content(dto.getContent())
                 .createdAt(LocalDateTime.now())
                 .read(false)
+                .userEmail(dto.getUserEmail())
                 .build();
         NotificationModel saved = notificationRepository.save(n);
         notifySubscribers(saved);
@@ -41,9 +42,10 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<NotificationModel> listUnread() {
-        return notificationRepository.findByReadFalseOrderByCreatedAtAsc();
+    public List<NotificationModel> listUnreadForUser(String userEmail) {
+        return notificationRepository.findUnreadNotificationsByUser(userEmail);
     }
+
 
     @Override
     public void markAsRead(Long id) {
