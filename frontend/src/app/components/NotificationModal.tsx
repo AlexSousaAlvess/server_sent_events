@@ -23,7 +23,16 @@ export default function NotificationModal({
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    notificationApi.unread().then(({ data }) => setNotifications(data));
+    console.log(role);
+    notificationApi.unread().then(({ data }) => {
+      const arr = data.filter((d: { type: string }) => {
+        if (d.type === role) {
+          return d;
+        }
+      });
+      setNotifications(arr);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const markAsRead = async (id: number) => {

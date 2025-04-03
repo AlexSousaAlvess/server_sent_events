@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
+import Image from "next/image";
+import { IoNotifications } from "react-icons/io5";
 import NotificationModal from "./NotificationModal";
 import { jwtDecode } from "jwt-decode";
 import { notificationApi } from "@/lib/api";
@@ -32,14 +34,14 @@ export default function Header() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const loadUser = () => {
     const token = localStorage.getItem("token");
-    if (!token) return router.push("/login");
+    if (!token) {
+      console.log("Sem token");
+    }
     try {
       const decoded = jwtDecode<JwtPayload>(token);
       setRole(decoded.role);
     } catch (err) {
       console.error("Token inválido");
-      localStorage.removeItem("token");
-      router.push("/login");
     }
   };
 
@@ -116,7 +118,7 @@ export default function Header() {
 
           {/* 🔔 Botão do sino */}
           <button onClick={() => setIsModalOpen(true)} className="relative">
-            <span className="material-icons">notificações</span>
+            <IoNotifications fontSize={30} />
             {unreadCount > 0 && (
               <span className="absolute -top-1 -right-2 bg-red-500 text-white rounded-full px-1 text-xs">
                 {unreadCount}

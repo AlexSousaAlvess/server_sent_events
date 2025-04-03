@@ -115,14 +115,6 @@ export default function HomePage() {
     loadUser();
     loadProducts();
 
-    notificationApi.unread().then(({ data }) => {
-      data.forEach((n: INotification) => {
-        if (n.type === role) {
-          showNotification(n.content, n.id);
-        }
-      });
-    });
-
     const eventSource = setupSSE();
     return () => eventSource.close();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,7 +144,7 @@ export default function HomePage() {
           </li>
         ))}
       </ul>
-      {/* <ToastContainer /> */}
+      <ToastContainer />
     </main>
   );
 }

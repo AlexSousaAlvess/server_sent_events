@@ -1,0 +1,3 @@
+com/gateway_service/filters/JwtAuthGatewayFilterFactory.class
+com/gateway_service/config/CorsGlobalConfig.class
+com/gateway_service/GatewayServiceApplication.class
