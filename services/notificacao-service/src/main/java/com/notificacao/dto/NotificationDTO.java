@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class NotificationDTO {
     private String type;   // "OPERADOR", "SUPERVISOR", "GERENTE"
     private String content;
-    private String userEmail;
+    private String userRole;
 
 }

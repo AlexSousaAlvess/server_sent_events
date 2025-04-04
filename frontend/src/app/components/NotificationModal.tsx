@@ -15,24 +15,15 @@ interface Notification {
 
 export default function NotificationModal({
   onClose,
-  role,
 }: {
   onClose: () => void;
-  role: string;
 }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    console.log(role);
-    notificationApi.unread().then(({ data }) => {
-      const arr = data.filter((d: { type: string }) => {
-        if (d.type === role) {
-          return d;
-        }
-      });
-      setNotifications(arr);
+    notificationApi.list().then(({ data }) => {
+      setNotifications(data);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const markAsRead = async (id: number) => {
@@ -57,12 +48,21 @@ export default function NotificationModal({
             {notifications.map((n) => (
               <li key={n.id} className="border bg-white p-2 rounded shadow-sm">
                 <p className="text-sm text-gray-800">{n.content}</p>
-                <button
-                  onClick={() => markAsRead(n.id)}
-                  className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                >
-                  Confirmar leitura
-                </button>
+                {n.read == false ? (
+                  <button
+                    onClick={() => markAsRead(n.id)}
+                    className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                  >
+                    Confirmar leitura
+                  </button>
+                ) : (
+                  <p
+                    className="text-sm text-gray-800"
+                    style={{ color: "green", fontWeight: "bold" }}
+                  >
+                    lida
+                  </p>
+                )}
               </li>
             ))}
           </ul>

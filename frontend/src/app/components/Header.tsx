@@ -29,34 +29,12 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [role, setRole] = useState<JwtPayload["role"] | null>(null);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const loadUser = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.log("Sem token");
-    }
-    try {
-      const decoded = jwtDecode<JwtPayload>(token);
-      setRole(decoded.role);
-    } catch (err) {
-      console.error("Token inválido");
-    }
-  };
 
   useEffect(() => {
-    loadUser();
-
     notificationApi.unread().then(({ data }) => {
-      const arr = data.filter((d) => {
-        if (d.type === role) {
-          return d;
-        }
-      });
-      setUnreadCount(arr?.length);
+      setUnreadCount(data?.length);
     });
-  }, [loadUser, role]);
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -150,7 +128,7 @@ export default function Header() {
         </nav>
       </header>
       {isModalOpen && (
-        <NotificationModal onClose={() => setIsModalOpen(false)} role={role} />
+        <NotificationModal onClose={() => setIsModalOpen(false)} />
       )}
     </>
   );

@@ -30,20 +30,19 @@ public class NotificationServiceImpl implements NotificationService {
                 .content(dto.getContent())
                 .createdAt(LocalDateTime.now())
                 .read(false)
-                .userEmail(dto.getUserEmail())
                 .build();
         NotificationModel saved = notificationRepository.save(n);
         notifySubscribers(saved);
     }
 
     @Override
-    public List<NotificationModel> listAll() {
-        return notificationRepository.findAll();
+    public List<NotificationModel> listAll(String userRole) {
+        return notificationRepository.listAllByUser(userRole);
     }
 
     @Override
-    public List<NotificationModel> listUnreadForUser(String userEmail) {
-        return notificationRepository.findUnreadNotificationsByUser(userEmail);
+    public List<NotificationModel> listUnreadForUser(String userRole) {
+        return notificationRepository.findUnreadNotificationsByUser(userRole);
     }
 
 

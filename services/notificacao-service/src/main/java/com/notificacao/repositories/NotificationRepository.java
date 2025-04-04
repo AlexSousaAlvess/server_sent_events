@@ -11,8 +11,11 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends JpaRepository<NotificationModel, Long> {
 
-    @Query("SELECT n FROM NotificationModel n WHERE n.read = false AND n.userEmail = :userEmail ORDER BY n.createdAt ASC")
-    List<NotificationModel> findUnreadNotificationsByUser(@Param("userEmail") String userEmail);
+    @Query("SELECT n FROM NotificationModel n WHERE n.type = :userRole ORDER BY n.createdAt ASC")
+    List<NotificationModel> listAllByUser(@Param("userRole") String userRole);
+
+    @Query("SELECT n FROM NotificationModel n WHERE n.read = false AND n.type = :userRole ORDER BY n.createdAt ASC")
+    List<NotificationModel> findUnreadNotificationsByUser(@Param("userRole") String userRole);
 
 
 }

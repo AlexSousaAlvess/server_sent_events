@@ -27,8 +27,15 @@ public class NotificationController {
     }
 
     @GetMapping("/unread")
-    public List<NotificationModel> getUnread(@RequestHeader("x-user-email") String userEmail) {
-        return notificationService.listUnreadForUser(userEmail);
+    public List<NotificationModel> getUnread(@RequestHeader("x-user-role") String userRole) {
+        var notification = notificationService.listUnreadForUser(userRole);
+        return notification;
+    }
+
+    @GetMapping("/list")
+    public List<NotificationModel> getList(@RequestHeader("x-user-role") String userRole) {
+        var notification = notificationService.listAll(userRole);
+        return notification;
     }
 
     @PatchMapping("/{id}/read")

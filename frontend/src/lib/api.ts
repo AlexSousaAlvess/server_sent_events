@@ -39,5 +39,6 @@ export const purchaseApi = {
 // 🔔 Notificações
 export const notificationApi = {
   unread: () => API.get("/notifications/unread"),
+  list: () => API.get("/notifications/list"),
   markRead: (id: number) => API.patch(`/notifications/${id}/read`),
 };

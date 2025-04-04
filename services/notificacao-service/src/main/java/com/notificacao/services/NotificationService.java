@@ -9,11 +9,11 @@ import java.util.List;
 public interface NotificationService {
     void save(NotificationDTO notificationDTO);
 
-    List<NotificationModel> listAll();
+    List<NotificationModel> listAll(String userRole);
 
     void markAsRead(Long id);
 
     SseEmitter subscribe();
 
-    List<NotificationModel> listUnreadForUser(String userEmail);
+    List<NotificationModel> listUnreadForUser(String userRole);
 }
